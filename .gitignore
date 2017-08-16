@@ -1,3 +1,9 @@
+### Custom ###
+bin
+vendor
+.env
+key.json
+
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
 *.a
