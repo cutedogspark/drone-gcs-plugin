@@ -220,5 +220,20 @@ func run(c *cli.Context) error {
 		Compress: c.StringSlice("compress"),
 	}
 
+	log.WithFields(log.Fields{
+		"credentials":      plugin.Credentials,
+		"bucket":           plugin.Bucket,
+		"source":           plugin.Source,
+		"target":           plugin.Target,
+		"triggerFolder":    plugin.TriggerFolder,
+		"tagFolder":        plugin.TagFolder,
+		"targetDateFolder": plugin.TargetDateFolder,
+		"triggerModule":    plugin.TriggerModule,
+		"triggerEven":      plugin.TriggerEven,
+		"triggerBranch":    plugin.TriggerBranch,
+		"triggerSHA":       plugin.TriggerSHA,
+		"buildEvent":       plugin.Build.Event,
+	}).Debug("Parameter..")
+
 	return plugin.Exec()
 }

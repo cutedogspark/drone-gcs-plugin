@@ -23,10 +23,10 @@ build: $(EXECUTABLE)
 
 $(EXECUTABLE): $(SOURCES)
 	@dep ensure
-	@GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -tags '$(TAGS) netgo' -ldflags '$(EXTLDFLAGS)-s -w $(LDFLAGS)' -o bin/linux/osx/$@
+#	@GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -tags '$(TAGS) netgo' -ldflags '$(EXTLDFLAGS)-s -w $(LDFLAGS)' -o bin/linux/osx/$@
 	@GOOS=linux  GOARCH=amd64 CGO_ENABLED=0 go build -tags '$(TAGS) netgo' -ldflags '$(EXTLDFLAGS)-s -w $(LDFLAGS)' -o bin/linux/amd64/$@
-	@GOOS=linux  GOARCH=arm64 CGO_ENABLED=0 go build -v -tags '$(TAGS) netgo'  -ldflags '$(EXTLDFLAGS)-s -w $(LDFLAGS)' -o bin/linux/arm64/$@
-	@GOOS=linux  GOARCH=arm   CGO_ENABLED=0 GOARM=7 go build -v -tags '$(TAGS) netgo' -ldflags '$(EXTLDFLAGS)-s -w $(LDFLAGS)' -o bin/linux/arm/$@
+#	@GOOS=linux  GOARCH=arm64 CGO_ENABLED=0 go build -v -tags '$(TAGS) netgo'  -ldflags '$(EXTLDFLAGS)-s -w $(LDFLAGS)' -o bin/linux/arm64/$@
+#	@GOOS=linux  GOARCH=arm   CGO_ENABLED=0 GOARM=7 go build -v -tags '$(TAGS) netgo' -ldflags '$(EXTLDFLAGS)-s -w $(LDFLAGS)' -o bin/linux/arm/$@
 
 deploy:
 	@docker push garychen/drone-plugin-gcs:latest

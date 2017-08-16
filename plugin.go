@@ -115,11 +115,17 @@ func (p Plugin) Exec() error {
 
 	cfg, err := google.JWTConfigFromJSON([]byte(p.Credentials), storage.ScopeFullControl)
 	if err != nil {
+		log.WithFields(log.Fields{
+			"error":  err,
+		}).Error("google parse gcs key fail")
 		return err
 	}
 
 	gcc, err := storage.NewClient(ctx, option.WithTokenSource(cfg.TokenSource(ctx)))
 	if err != nil {
+		log.WithFields(log.Fields{
+			"error":  err,
+		}).Error("google client fail")
 		return err
 	}
 	defer gcc.Close()
@@ -164,10 +170,6 @@ func (p *Plugin) uploadFile(ctx context.Context, bkt *storage.BucketHandle, matc
 
 	f, err := os.Open(match)
 	if err != nil {
-		log.WithFields(log.Fields{
-			"error": err,
-			"file":  match,
-		}).Error("Problem opening file")
 		return err
 	}
 	defer f.Close()
