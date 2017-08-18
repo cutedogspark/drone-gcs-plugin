@@ -71,7 +71,7 @@ type (
 )
 
 // normalize target path
-func (p Plugin) normalizeTargetPath() {
+func (p *Plugin) normalizeTargetPath() {
 	if strings.HasPrefix(p.Target, "/") {
 		p.Target = p.Target[1:]
 	}
@@ -82,29 +82,51 @@ func (p Plugin) normalizeTargetPath() {
 	return
 }
 
-func (p Plugin) detectionTarget() error {
+func (p *Plugin) detectionTarget() error {
 
-	if p.TriggerBranch != "" && p.TriggerBranch != "master" && p.TriggerEven != "tag" {
-		log.Info("Trigger Mode")
-		p.Target = p.TriggerFolder
+	if p.TriggerEven != "" {
+		log.Info("--- Sub Project --- ")
+		if p.TriggerEven == "pull_request" {
+			log.Info("Trigger Mode")
+			p.Target = p.TriggerFolder
+		} else if p.TriggerEven == "push" && p.TriggerBranch != "master" {
+			log.Info("Trigger Mode")
+			p.Target = p.TriggerFolder
+		} else if p.TriggerEven == "tag" {
+			log.Info("Tag Mode")
+			p.Target = p.TagFolder
+		} else {
+			log.Info("Normal Mode")
+			p.Target = p.Target
+		}
+	}else{
+		log.Info("--- Main Project  --- ")
+		if p.Event == "pull_request" {
+			log.Info("Trigger Mode")
+			p.Target = p.TriggerFolder
+		} else if p.Event == "push" && p.Branch != "master" {
+			log.Info("Trigger Mode")
+			p.Target = p.TriggerFolder
+		} else if p.Event == "tag" {
+			log.Info("Tag Mode")
+			p.Target = p.TagFolder
+		} else {
+			log.Info("Normal Mode")
+			p.Target = p.Target
+		}
 	}
 
-	if p.TriggerEven == "tag" || p.Build.Event == "tag" {
-		log.Info("Tag Mode")
-		p.Target = p.TagFolder
-	} else {
-		log.Info("Normal Mode")
-		p.Target = p.Target
-	}
 
-	log.Debug("target folder => ", p.Target)
 	return nil
 }
 
-func (p Plugin) Exec() error {
+func (p *Plugin) Exec() error {
 
 	p.detectionTarget()
+
 	p.normalizeTargetPath()
+
+	log.Debug("Target folder => ", p.Target)
 
 	if p.TargetDateFolder {
 		p.Target = fmt.Sprintf("%s/%s/%s", p.Target, time.Now().Format("2006"), time.Now().Format("01-02"))
@@ -116,7 +138,7 @@ func (p Plugin) Exec() error {
 	cfg, err := google.JWTConfigFromJSON([]byte(p.Credentials), storage.ScopeFullControl)
 	if err != nil {
 		log.WithFields(log.Fields{
-			"error":  err,
+			"error": err,
 		}).Error("google parse gcs key fail")
 		return err
 	}
@@ -124,7 +146,7 @@ func (p Plugin) Exec() error {
 	gcc, err := storage.NewClient(ctx, option.WithTokenSource(cfg.TokenSource(ctx)))
 	if err != nil {
 		log.WithFields(log.Fields{
-			"error":  err,
+			"error": err,
 		}).Error("google client fail")
 		return err
 	}

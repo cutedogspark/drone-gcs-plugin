@@ -221,7 +221,6 @@ func run(c *cli.Context) error {
 	}
 
 	log.WithFields(log.Fields{
-		"credentials":      plugin.Credentials,
 		"bucket":           plugin.Bucket,
 		"source":           plugin.Source,
 		"target":           plugin.Target,
